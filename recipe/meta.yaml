@@ -18,6 +18,17 @@ build:
   # the dart compile exe output embeds the Dart VM and does not react well
   # to prefix replacement; conda-forge sets the same flag
   binary_relocation: false
+  missing_dso_whitelist:
+    # system glibc that the compiled AOT executable links against
+    - "*/libm.so.6"  # [linux]
+    - "*/libpthread.so.0"  # [linux]
+    - "*/libdl.so.2"  # [linux]
+    - "*/libc.so.6"  # [linux]
+    - "*/ld-linux-x86-64.so.2"  # [linux and x86_64]
+    - "*/ld-linux-aarch64.so.2"  # [linux and aarch64]
+    # API-set contract DLL that the compiled windows executable imports; it
+    # is provided by the OS at runtime, not by any conda package
+    - "api-ms-win-core-path-l1-1-0.dll"  # [win]
 
 requirements:
   # dart-sdk is unavoidably a repack of Google's official prebuilt SDK
