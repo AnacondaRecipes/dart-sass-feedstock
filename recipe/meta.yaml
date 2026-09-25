@@ -19,6 +19,9 @@ requirements:
   # dart-sdk is unavoidably a repack of Google's official prebuilt SDK
   # binaries (a Dart SDK source build is not conda-viable); it is a build
   # toolchain here, not redistributed inside the dart-sass package
+  build:
+    # `dart run grinder protobuf` clones github.com/sass/language via git
+    - git
   host:
     - dart-sdk
     - buf
