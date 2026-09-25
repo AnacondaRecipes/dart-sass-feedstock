@@ -1,9 +1,13 @@
-REM conda-build extracts the archive flat: src\ holds the dart runtime,
-REM sass.snapshot and LICENSE
-if not exist "%LIBRARY_PREFIX%\share\dart-sass\src" mkdir "%LIBRARY_PREFIX%\share\dart-sass\src"
-if not exist "%LIBRARY_BIN%" mkdir "%LIBRARY_BIN%"
-xcopy /e /i /y src "%LIBRARY_PREFIX%\share\dart-sass\src\"
+@echo on
+
+rem Resolve Dart dependencies from pub.dev (same as conda-forge build)
+dart pub get
 if %ERRORLEVEL% NEQ 0 exit 1
 
-copy /y "%RECIPE_DIR%\win\sass.bat" "%LIBRARY_BIN%\sass.bat"
+rem Generate the protobuf sources (requires buf from the host environment)
+dart run grinder protobuf
+if %ERRORLEVEL% NEQ 0 exit 1
+
+rem Compile the sass CLI to a self-contained AOT executable
+dart compile exe --define="version=%PKG_VERSION%" bin\sass.dart -o %LIBRARY_BIN%\sass.exe
 if %ERRORLEVEL% NEQ 0 exit 1

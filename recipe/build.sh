@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
-set -eux
+set -euo pipefail
 
-mkdir -p "${PREFIX}/bin"
-mkdir -p "${PREFIX}/share/dart-sass"
-
-# conda-build extracts the archive flat: `sass` wrapper + `src/` (dart runtime,
-# sass.snapshot, LICENSE)
-cp -R sass src "${PREFIX}/share/dart-sass/"
-chmod +x "${PREFIX}/share/dart-sass/sass" "${PREFIX}/share/dart-sass/src/dart"
-
-ln -sf ../share/dart-sass/sass "${PREFIX}/bin/sass"
+# Resolve Dart dependencies from pub.dev (same as conda-forge's build).
+dart pub get
+# Generate the protobuf sources (requires buf from the host environment).
+dart run grinder protobuf
+# Compile the sass CLI to a self-contained AOT executable.
+dart compile exe --define="version=${PKG_VERSION}" bin/sass.dart -o "${PREFIX}/bin/sass"

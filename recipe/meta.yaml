@@ -6,41 +6,22 @@ package:
   version: {{ version }}
 
 source:
-  # Repackage of the official prebuilt standalone distribution (bundled Dart
-  # runtime + AOT snapshot). Building from source, as conda-forge does, needs
-  # dart-sdk + buf, which are not available on pkgs/main.
-  - url: https://github.com/sass/dart-sass/releases/download/{{ version }}/dart-sass-{{ version }}-linux-x64.tar.gz  # [linux and x86_64]
-    sha256: 13c47fe50f707df6d5c2ea8e612ab3ce3b81e351c31f0ebb43072ca7781ad3da  # [linux and x86_64]
-  - url: https://github.com/sass/dart-sass/releases/download/{{ version }}/dart-sass-{{ version }}-linux-arm64.tar.gz  # [linux and aarch64]
-    sha256: fe3abb3697d5c835cb5fda9fb899dd1321dc031d75255bacd21917cb897ad944  # [linux and aarch64]
-  - url: https://github.com/sass/dart-sass/releases/download/{{ version }}/dart-sass-{{ version }}-macos-x64.tar.gz  # [osx and x86_64]
-    sha256: 5c7720a57ff716f0be5c43a19d4ea5a5542a501ac338d1788186d116888dd2d7  # [osx and x86_64]
-  - url: https://github.com/sass/dart-sass/releases/download/{{ version }}/dart-sass-{{ version }}-macos-arm64.tar.gz  # [osx and arm64]
-    sha256: 6ca9013f22749719b12f1849ad5f57452599358027c6556f134f84c702cce9c1  # [osx and arm64]
-  - url: https://github.com/sass/dart-sass/releases/download/{{ version }}/dart-sass-{{ version }}-windows-x64.zip  # [win and x86_64]
-    sha256: 1824648a88b883f8bdcb21edfec534bfc07ec7bf3f206c6cf26c2330b1400fb6  # [win and x86_64]
+  url: https://github.com/sass/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  sha256: 2af48b186eb895f5e70a2fd29e001b0dcb98d51382dd95117ad1be68f600788f
 
 build:
   number: 0
-  # The AOT snapshot and the macOS codesignature break if the bundled runtime
-  # is relocated; conda-forge sets the same flag.
+  # the dart compile exe output embeds the Dart VM and does not react well
+  # to prefix replacement; conda-forge sets the same flag
   binary_relocation: false
-  missing_dso_whitelist:
-    # system glibc that the bundled dart runtime links against
-    - "*/libm.so.6"  # [linux]
-    - "*/libpthread.so.0"  # [linux]
-    - "*/libdl.so.2"  # [linux]
-    - "*/libc.so.6"  # [linux]
-    - "*/ld-linux-x86-64.so.2"  # [linux and x86_64]
-    - "*/ld-linux-aarch64.so.2"  # [linux and aarch64]
-    # API-set contract DLL that the bundled windows dart.exe imports; it is
-    # provided by the OS at runtime, not by any conda package
-    - "api-ms-win-core-path-l1-1-0.dll"  # [win]
 
 requirements:
-  # self-contained upstream binary: the Dart runtime and AOT snapshot are
-  # bundled, so there are no conda build/host/run dependencies
-  run: []
+  # dart-sdk is unavoidably a repack of Google's official prebuilt SDK
+  # binaries (a Dart SDK source build is not conda-viable); it is a build
+  # toolchain here, not redistributed inside the dart-sass package
+  host:
+    - dart-sdk
+    - buf
 
 test:
   files:
@@ -58,13 +39,13 @@ about:
   dev_url: https://github.com/sass/dart-sass
   license: MIT
   license_family: MIT
-  license_file: src/LICENSE
+  license_file: LICENSE
   summary: Dart implementation of Sass. Sass makes CSS fun again.
   description: >
     Sass is the most mature, stable, and powerful professional grade CSS
-    extension language in the world. This package repackages the official
-    prebuilt dart-sass standalone distribution, which bundles the Dart runtime
-    together with the compiled dart-sass AOT snapshot.
+    extension language in the world. This package compiles dart-sass from
+    source with the Dart SDK and buf from conda, using the same flow as
+    conda-forge.
 
 extra:
   recipe-maintainers:
