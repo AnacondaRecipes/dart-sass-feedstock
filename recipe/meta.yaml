@@ -1,0 +1,71 @@
+{% set name = "dart-sass" %}
+# 1.101.x cannot be built from source any more: the grinder build clones
+# github.com/sass/sass at main (unpinned), and the 2026-09-18 embedded-protocol
+# change (Value_Value.compilerModule) is not handled by any 1.101.x source.
+# 1.105.0 is upstream's current stable and builds cleanly against it.
+{% set version = "1.105.0" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/sass/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  sha256: cc526648540511381187af2e71d7c831e7ad2ba27d8fb0d0d882e78053a4df79
+
+build:
+  number: 0
+  # the dart compile exe output embeds the Dart VM and does not react well
+  # to prefix replacement; conda-forge sets the same flag
+  binary_relocation: false
+  missing_dso_whitelist:
+    # system glibc that the compiled AOT executable links against
+    - "*/libm.so.6"  # [linux]
+    - "*/libpthread.so.0"  # [linux]
+    - "*/libdl.so.2"  # [linux]
+    - "*/libc.so.6"  # [linux]
+    - "*/ld-linux-x86-64.so.2"  # [linux and x86_64]
+    - "*/ld-linux-aarch64.so.2"  # [linux and aarch64]
+    # API-set contract DLL that the compiled windows executable imports; it
+    # is provided by the OS at runtime, not by any conda package
+    - "api-ms-win-core-path-l1-1-0.dll"  # [win]
+
+requirements:
+  # dart-sdk is unavoidably a repack of Google's official prebuilt SDK
+  # binaries (a Dart SDK source build is not conda-viable); it is a build
+  # toolchain here, not redistributed inside the dart-sass package
+  build:
+    # `dart run grinder protobuf` clones github.com/sass/language via git
+    - git
+  host:
+    - dart-sdk
+    - buf
+
+test:
+  files:
+    - test.sass
+  commands:
+    # the bundled Dart VM needs macOS 14+; PBP osx test workers run macOS 13 (PKG-18405),
+    # so on osx only verify the payload is installed
+    - test -x "${PREFIX}/bin/sass"  # [osx]
+    - sass --version  # [not osx]
+    - sass test.sass  # [not osx]
+
+about:
+  home: https://sass-lang.com/dart-sass
+  doc_url: https://sass-lang.com/dart-sass
+  dev_url: https://github.com/sass/dart-sass
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Dart implementation of Sass. Sass makes CSS fun again.
+  description: >
+    Sass is the most mature, stable, and powerful professional grade CSS
+    extension language in the world. This package compiles dart-sass from
+    source with the Dart SDK and buf from conda, using the same flow as
+    conda-forge.
+
+extra:
+  recipe-maintainers:
+    - msarahan
+    - munechika-koyo
