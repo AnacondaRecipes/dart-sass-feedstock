@@ -33,6 +33,9 @@ build:
     - "*/libc.so.6"  # [linux]
     - "*/ld-linux-x86-64.so.2"  # [linux and x86_64]
     - "*/ld-linux-aarch64.so.2"  # [linux and aarch64]
+    # API-set contract DLL that the bundled windows dart.exe imports; it is
+    # provided by the OS at runtime, not by any conda package
+    - "api-ms-win-core-path-l1-1-0.dll"  # [win]
 
 requirements:
   # self-contained upstream binary: the Dart runtime and AOT snapshot are
@@ -43,8 +46,11 @@ test:
   files:
     - test.sass
   commands:
-    - sass --version
-    - sass test.sass
+    # the bundled Dart VM needs macOS 14+; PBP osx test workers run macOS 13 (PKG-18405),
+    # so on osx only verify the payload is installed
+    - test -x "${PREFIX}/bin/sass"  # [osx]
+    - sass --version  # [not osx]
+    - sass test.sass  # [not osx]
 
 about:
   home: https://sass-lang.com/dart-sass
