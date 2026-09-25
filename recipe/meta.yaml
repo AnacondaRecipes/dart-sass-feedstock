@@ -1,5 +1,9 @@
 {% set name = "dart-sass" %}
-{% set version = "1.101.0" %}
+# 1.101.x cannot be built from source any more: the grinder build clones
+# github.com/sass/sass at main (unpinned), and the 2026-09-18 embedded-protocol
+# change (Value_Value.compilerModule) is not handled by any 1.101.x source.
+# 1.105.0 is upstream's current stable and builds cleanly against it.
+{% set version = "1.105.0" %}
 
 package:
   name: {{ name }}
@@ -7,7 +11,7 @@ package:
 
 source:
   url: https://github.com/sass/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 2af48b186eb895f5e70a2fd29e001b0dcb98d51382dd95117ad1be68f600788f
+  sha256: cc526648540511381187af2e71d7c831e7ad2ba27d8fb0d0d882e78053a4df79
 
 build:
   number: 0
