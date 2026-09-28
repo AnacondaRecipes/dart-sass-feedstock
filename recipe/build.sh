@@ -5,6 +5,7 @@ set -euo pipefail
 # the same cache serves every platform); pub resolves offline, keeping the
 # build free of pub.dev access.
 export PUB_CACHE="${SRC_DIR}/pub-cache"
+mkdir -p "${PUB_CACHE}"
 tar xzf "${RECIPE_DIR}/dart-sass-pub-cache.tar.gz" -C "${PUB_CACHE}"
 dart pub get --offline
 
