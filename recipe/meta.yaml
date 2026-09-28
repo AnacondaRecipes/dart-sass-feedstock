@@ -36,7 +36,7 @@ build:
     - "*/ld-linux-aarch64.so.2"  # [linux and aarch64]
     # API-set contract DLL that the compiled windows executable imports; it
     # is provided by the OS at runtime, not by any conda package
-    - "api-ms-win-core-path-l1-1-0.dll"  # [win]
+    - "*/api-ms-win-core-path-l1-1-0.dll"  # [win]
 
 requirements:
   # dart-sdk is unavoidably a repack of Google's official prebuilt SDK
