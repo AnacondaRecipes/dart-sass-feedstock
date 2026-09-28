@@ -4,8 +4,9 @@ rem All Dart dependencies ship in the recipe pub cache; pub resolves offline,
 rem keeping the build free of pub.dev access (PBP win workers have no egress)
 set "PUB_CACHE=%SRC_DIR%\pub-cache"
 mkdir "%PUB_CACHE%" 2>nul
-rem extract with python tarfile: GNU tar treats the C: in a windows path as a remote host
-python -c "import tarfile; tarfile.open(r'%RECIPE_DIR%\dart-sass-pub-cache.tar.gz').extractall(r'%PUB_CACHE%', filter='data')"
+rem extract with the system bsdtar: it handles drive-letter paths, unlike the
+rem GNU tar on PATH, which reads the C: in a windows path as a remote host
+%SystemRoot%\System32\tar.exe -xzf "%RECIPE_DIR%\dart-sass-pub-cache.tar.gz" -C "%PUB_CACHE%"
 if %ERRORLEVEL% NEQ 0 exit 1
 dart pub get --offline
 if %ERRORLEVEL% NEQ 0 exit 1
