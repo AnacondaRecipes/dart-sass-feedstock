@@ -12,6 +12,14 @@ package:
 source:
   url: https://github.com/sass/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: cc526648540511381187af2e71d7c831e7ad2ba27d8fb0d0d882e78053a4df79
+  # Vendored build inputs (regenerate both on a version bump):
+  # - dart-sass-pub-cache.tar.gz: `dart pub get` cache for the pinned pubspec
+  #   (generate: extract the source, run `PUB_CACHE=<dir> dart pub get`, tar the dir);
+  #   ships because the PBP windows workers have no pub.dev egress
+  # - sass-language-88142a47.bundle: git bundle of sass/sass at the commit the
+  #   release was built against (spec EMBEDDED_PROTOCOL_VERSION 3.3.0); grinder
+  #   otherwise clones sass/sass main, which is unpinned and drifts past the
+  #   tagged dart-sass release
 
 build:
   number: 0
