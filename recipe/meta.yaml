@@ -48,6 +48,10 @@ requirements:
   host:
     - dart-sdk
     - buf
+  run:
+    # libprotobuf pattern: encode the macOS floor the artifact actually needs.
+    # The embedded Dart VM (dart-sdk 3.13.4) requires macOS 14 at runtime.
+    - __osx >={{ MACOSX_DEPLOYMENT_TARGET }}  # [osx]
 
 test:
   files:
