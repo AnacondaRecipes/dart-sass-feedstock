@@ -1,0 +1,13 @@
+# The Dart VM in dart-sdk 3.13.4 requires macOS 14 at runtime (the dart-sass
+# build runs it). Following the qtwebengine-feedstock pattern: raise the
+# deployment target and point the sysroot at the newest SDK via OSX_SDK_VER,
+# overriding the aggregate CBC's CONDA_BUILD_SYSROOT (MacOSX12.1.sdk) which
+# the osx-sysroot activation script would otherwise win with.
+MACOSX_DEPLOYMENT_TARGET:  # [osx]
+  - 14.0  # [osx]
+c_stdlib_version:  # [osx]
+  - 14.0  # [osx]
+OSX_SDK_VER:  # [osx]
+  - 15  # [osx]
+CONDA_BUILD_SYSROOT:  # [osx]
+  - /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk  # [osx]

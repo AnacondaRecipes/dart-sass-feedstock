@@ -1,0 +1,6 @@
+# Staging channels carrying the dependency-chain artifacts this build needs
+# until dart-sdk and buf are released to pkgs/main (PKG-18211 chain).
+# REMOVE these two lines once both packages are on pkgs/main.
+channels:
+  - https://staging.continuum.io/pbp/fs/dart-sdk-feedstock/pr1/53bd3b5
+  - https://staging.continuum.io/pbp/fs/buf-feedstock/pr1/63efe6a

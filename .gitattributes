@@ -5,6 +5,7 @@
 meta.yaml text eol=lf
 build.sh text eol=lf
 bld.bat text eol=crlf
+win/sass.bat text eol=crlf
 
 # github helper pieces to make some files not show up in diffs automatically
 .azure-pipelines/* linguist-generated=true
